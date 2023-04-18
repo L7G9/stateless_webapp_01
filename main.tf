@@ -20,7 +20,7 @@ provider "aws" {
   region = "eu-west-2"
 }
 
-resource "aws_vpc" "stateless_webapp_vpc" {
+resource "aws_vpc" "vpc" {
   cidr_block = "10.0.0.0/16"
 
   tags = {
@@ -28,10 +28,10 @@ resource "aws_vpc" "stateless_webapp_vpc" {
   }
 }
 
-resource "aws_security_group" "allow_http" {
-  name        = "allow_http"
+resource "aws_security_group" "lb_sg" {
+  name        = "lb_sg"
   description = "Allow HTTP inbound traffic"
-  vpc_id      = aws_vpc.stateless_webapp_vpc.id
+  vpc_id      = aws_vpc.vpc.id
 
   ingress {
     description = "HTTP from anywhere"
@@ -42,13 +42,35 @@ resource "aws_security_group" "allow_http" {
   }
 
   tags = {
-    Name = "stateless_webapp_sg_allow_http"
+    Name = "stateless_webapp_lb_sg"
   }
 }
 
-#resource "aws_alb" "name" {
+resource "aws_security_group" "asg_sg" {
+  name = "asg_sg"
+  description = "Allow all traffic to and from load balancer's security group"
+  vpc_id = aws_vpc.vpc.id
 
-#}
+  ingress {
+  }
+
+  tags = {
+    Name = "stateless_webapp_asg_sg"
+  }
+}
+
+resource "aws_lb" "stateless_webapp_lb" {
+  name = "stateless_webapp_lb"
+  internal = false
+  load_balancer_type = "application"
+  security_group = [aws_security_group.lb_sg.id]
+
+  enable_deletion_protection = true
+
+  tags = {
+    Name = "stateless_webapp_lb"
+  }
+}
 
 resource "aws_launch_template" "stateless_webapp_lt" {
   name_prefix = "stateless_webapp_lt"
