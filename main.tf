@@ -70,3 +70,24 @@ resource "aws_security_group" "stateless_webapp_lb" {
 
   vpc_id = aws_vpc.stateless_webapp_vpc.id
 }
+
+resource "aws_launch_configuration" "stateless_webapp_lc" {
+  name_prefix = "stateless-webapp-"
+  image_id = "???"
+  instance_type = "t2.micro"
+  user_data = file("user-data.sh")
+  security_groups = [aws_security_group.stateless_webapp_insatnce.id]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_autoscalling_group" "stateless_webapp_asg" {
+  name = "statleless-webapp-asg"
+  min_size = 1
+  max_size = 3
+  desired_capacity = 1
+  launch_configuration = aws_launch_configuration.stateless_webapp_lc.name
+  vpc_zone_identifier = ???
+}
