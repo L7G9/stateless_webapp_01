@@ -20,7 +20,6 @@ provider "aws" {
   region = "eu-west-2"
 }
 
-# Create a VPC
 resource "aws_vpc" "stateless_webapp_vpc" {
   cidr_block = "10.0.0.0/16"
 
@@ -29,7 +28,6 @@ resource "aws_vpc" "stateless_webapp_vpc" {
   }
 }
 
-# Create security group letting in http traffic from anywhere
 resource "aws_security_group" "allow_http" {
   name        = "allow_http"
   description = "Allow HTTP inbound traffic"
@@ -48,9 +46,32 @@ resource "aws_security_group" "allow_http" {
   }
 }
 
-# Create an application load balancer
 #resource "aws_alb" "name" {
 
 #}
 
-# Create an auto scalling group
+resource "aws_launch_template" "stateless_webapp_lt" {
+  name_prefix = "stateless_webapp_lt"
+  image_id = "ami-???"
+  instance_type = "t2.micro" 
+
+  tags = {
+    Name = "stateless_web_lt"
+  }
+}
+
+resource "aws_autoscaling_group" "stateless_webapp_asg" {
+  availability_zones = ["eu-west-2a"]
+  desired_capacity = 1
+  max_size = 2
+  min_size = 1
+
+  launch_template {
+    id = aws_launch_template.stateless_webapp_lt.id
+    version = "$Latest"
+  }
+
+  tags = {
+    Name = "stateless_webapp_asg"
+  }
+}
