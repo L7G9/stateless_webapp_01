@@ -71,13 +71,27 @@ resource "aws_security_group" "stateless_webapp_lb" {
   vpc_id = aws_vpc.stateless_webapp_vpc.id
 }
 
+data "aws_ami" "amazon-linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    #update ???
+    values = ["amzn-ami-hvm-*-x86_64-ebs"]
+  }
+}
+
+# NOTE launch template prefered over launch configuation 
 resource "aws_launch_configuration" "stateless_webapp_lc" {
-  name_prefix = "stateless-webapp-"
-  image_id = "???"
+  ## creates unique name starting with value of name_prefix
+  name_prefix = "stateless-webapp-lc-"
+  image_id = data.aws_ami.amazon_linux.id
   instance_type = "t2.micro"
   user_data = file("user-data.sh")
   security_groups = [aws_security_group.stateless_webapp_insatnce.id]
 
+  ## ???
   lifecycle {
     create_before_destroy = true
   }
@@ -89,5 +103,15 @@ resource "aws_autoscalling_group" "stateless_webapp_asg" {
   max_size = 3
   desired_capacity = 1
   launch_configuration = aws_launch_configuration.stateless_webapp_lc.name
-  vpc_zone_identifier = ???
+  
+  #???
+  target_group_arns = 
+
+  # add tag to EC2 instances launched by this ASG
+  tag {
+    key = "Name"
+    value = "stateless-webapp-instance- from asg"
+    propagate_at_launch = true
+  }
 }
+
