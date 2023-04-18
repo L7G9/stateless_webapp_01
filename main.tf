@@ -20,80 +20,53 @@ provider "aws" {
   region = "eu-west-2"
 }
 
-resource "aws_vpc" "vpc" {
+resource "aws_vpc" "stateless_webapp_vpc" {
+  name = "stateless_webapp_vpc"
   cidr_block = "10.0.0.0/16"
+
+  azs = ["eu-west-2a"]
 
   tags = {
     Name = "stateless_webapp_vpc"
   }
 }
 
-resource "aws_security_group" "lb_sg" {
-  name        = "lb_sg"
-  description = "Allow HTTP inbound traffic"
-  vpc_id      = aws_vpc.vpc.id
+resource "aws_security_group" "stateless_webapp_instance" {
+  name = "stateless-webapp-asg-instance"
 
   ingress {
-    description = "HTTP from anywhere"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    security_groups = [aws_security_group.stateless_webapp_lb.id]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    security_groups = [aws_security_group.stateless_webapp_lb.id]
+  }
+
+  vpc_id = aws_vpc.stateless_webapp_vpc.id  
+}
+
+resource "aws_security_group" "stateless_webapp_lb" {
+  name = "static-webapp-asg-instance"
+
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Name = "stateless_webapp_lb_sg"
-  }
-}
-
-resource "aws_security_group" "asg_sg" {
-  name = "asg_sg"
-  description = "Allow all traffic to and from load balancer's security group"
-  vpc_id = aws_vpc.vpc.id
-
-  ingress {
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Name = "stateless_webapp_asg_sg"
-  }
-}
-
-resource "aws_lb" "stateless_webapp_lb" {
-  name = "stateless_webapp_lb"
-  internal = false
-  load_balancer_type = "application"
-  security_group = [aws_security_group.lb_sg.id]
-
-  enable_deletion_protection = true
-
-  tags = {
-    Name = "stateless_webapp_lb"
-  }
-}
-
-resource "aws_launch_template" "stateless_webapp_lt" {
-  name_prefix = "stateless_webapp_lt"
-  image_id = "ami-???"
-  instance_type = "t2.micro" 
-
-  tags = {
-    Name = "stateless_web_lt"
-  }
-}
-
-resource "aws_autoscaling_group" "stateless_webapp_asg" {
-  availability_zones = ["eu-west-2a"]
-  desired_capacity = 1
-  max_size = 2
-  min_size = 1
-
-  launch_template {
-    id = aws_launch_template.stateless_webapp_lt.id
-    version = "$Latest"
-  }
-
-  tags = {
-    Name = "stateless_webapp_asg"
-  }
+  vpc_id = aws_vpc.stateless_webapp_vpc.id
 }
