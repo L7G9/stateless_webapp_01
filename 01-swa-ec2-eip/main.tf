@@ -49,13 +49,55 @@ data "aws_ami" "amazon_linux" {
 }
 
 # create a vpc
+resource "aws_vpc" "web_server" {
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "web_server_vpc"
+  }
+}
+
+# internet gateway
+resource "aws_internet_gateway" "web_server" {
+  vpc_id = aws_vpc.web_server.id
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet
+resource "aws_subnet" "main" {
+  vpc_id     = aws_vpc.web_server.id
+  cidr_block = "10.0.1.0/24"
+
+  tags = {
+    Name = "Main"
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table
+resource "aws_route_table" "vpc_route_table" {
+  vpc_id = aws_vpc.web_server.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.web_server.id
+  }
+
+  tags = {
+    Name = "vpc_route_table"
+  }
+}
+
+# https://spacelift.io/blog/terraform-aws-vpc
+resource "aws_route_table_association" "public_sunbet_association" {
+  route_table_id = aws_route_table.vpc_route_table.id
+  subnet_id      = aws_subnet.main.id
+}
 
 # create a security group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group
 resource "aws_security_group" "web_server" {
   name        = "web-server"
   description = "Allow ssh, http & https inbound traffic and all outbound traffic"
-  #vpc_id = optional, default vpc if omitted 
+  vpc_id      = aws_vpc.web_server.id
 
   tags = {
     Name = "allow-ssh-http-https"
@@ -105,9 +147,10 @@ resource "aws_vpc_security_group_egress_rule" "allow_all" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
 resource "aws_instance" "web_server" {
-  ami           = data.aws_ami.amazon_linux.id
-  instance_type = "t2.micro"
+  ami                    = data.aws_ami.amazon_linux.id
+  instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.web_server.id]
+  subnet_id              = aws_subnet.main.id
 
   user_data = file("${path.module}/files/user-data.sh")
 
