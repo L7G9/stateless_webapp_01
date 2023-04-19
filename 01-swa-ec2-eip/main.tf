@@ -22,10 +22,10 @@ provider "aws" {
 
 #https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
 resource "aws_instance" "web_server" {
-  image_id        = "ami-0cd8ad123effa531a"
-  instance_type   = "t2.micro"
+  ami = "ami-0cd8ad123effa531a"
+  instance_type = "t2.micro"
 
-  user_data = file("../files/user-data.sh")
+  user_data = file("${path.module}/files/user-data.sh")
 
   tags = {
     Name = "swa-01-web-server"
@@ -35,7 +35,7 @@ resource "aws_instance" "web_server" {
 #https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip
 resource "aws_eip" "web_server" {
   instance = aws_instance.web_server.id
-  vpc = true
+  vpc      = true
 
   tags = {
     Name = "swa-01-web-server-ip"
