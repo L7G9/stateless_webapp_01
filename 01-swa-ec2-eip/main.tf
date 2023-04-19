@@ -22,7 +22,7 @@ provider "aws" {
 
 #https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
 resource "aws_instance" "web_server" {
-  ami = "ami-0cd8ad123effa531a"
+  ami           = "ami-0cd8ad123effa531a"
   instance_type = "t2.micro"
 
   user_data = file("${path.module}/files/user-data.sh")
