@@ -3,7 +3,7 @@ resource "aws_vpc" "this" {
   cidr_block = "10.0.0.0/16"
 
   tags = {
-    Name = "web_server_vpc"
+    Name = "swa_01_vpc"
   }
 }
 
@@ -17,7 +17,7 @@ resource "aws_subnet" "public" {
   cidr_block = "10.0.1.0/24"
 
   tags = {
-    Name = "Main"
+    Name = "swa_01_subnet"
   }
 }
 
@@ -30,7 +30,7 @@ resource "aws_route_table" "this" {
   }
 
   tags = {
-    Name = "vpc_route_table"
+    Name = "swa_01_route_table"
   }
 }
 
