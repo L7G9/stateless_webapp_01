@@ -1,6 +1,17 @@
+variable "name_tag" {
+  type        = string
+  description = "Value of AWS Name tag to give all resources created by this project"
+  default     = "stateless_webapp_01"
+}
+
 variable "region" {
   type        = string
   description = "AWS region defined in main.tf"
+}
+
+variable "availability_zone" {
+  type        = string
+  description = "Availability zone of subnet defined in network.tf"
 }
 
 variable "vpc_cidr" {
@@ -11,7 +22,7 @@ variable "vpc_cidr" {
 
 variable "subnet_cidr" {
   type        = string
-  description = "subnet cidr block defined in netowrk.tf"
+  description = "Subnet cidr block defined in netowrk.tf"
   default     = "10.0.1.0/24"
 }
 
