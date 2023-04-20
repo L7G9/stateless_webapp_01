@@ -2,20 +2,25 @@ resource "aws_vpc" "this" {
   cidr_block = var.vpc_cidr
 
   tags = {
-    Name = "swa_01_vpc"
+    Name = var.name_tag
   }
 }
 
 resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
+
+  tags = {
+    Name = var.name_tag
+  }
 }
 
 resource "aws_subnet" "this" {
-  vpc_id     = aws_vpc.this.id
-  cidr_block = var.subnet_cidr
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = var.subnet_cidr
+  availability_zone = var.availability_zone
 
   tags = {
-    Name = "swa_01_subnet"
+    Name = var.name_tag
   }
 }
 
@@ -28,7 +33,7 @@ resource "aws_route_table" "this" {
   }
 
   tags = {
-    Name = "swa_01_route_table"
+    Name = var.name_tag
   }
 }
 

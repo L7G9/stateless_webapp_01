@@ -1,10 +1,9 @@
 resource "aws_security_group" "this" {
-  name        = "this"
   description = "Allow ssh, http & https inbound traffic and all outbound traffic"
   vpc_id      = aws_vpc.this.id
 
   tags = {
-    Name = "swa_01_sg"
+    Name = var.name_tag
   }
 }
 
@@ -16,6 +15,10 @@ resource "aws_vpc_security_group_ingress_rule" "allow_shh" {
   from_port   = 22
   ip_protocol = "tcp"
   to_port     = 22
+
+  tags = {
+    Name = var.name_tag
+  }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_http" {
@@ -26,6 +29,10 @@ resource "aws_vpc_security_group_ingress_rule" "allow_http" {
   from_port   = 80
   ip_protocol = "tcp"
   to_port     = 80
+
+  tags = {
+    Name = var.name_tag
+  }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_https" {
@@ -36,6 +43,10 @@ resource "aws_vpc_security_group_ingress_rule" "allow_https" {
   from_port   = 443
   ip_protocol = "tcp"
   to_port     = 443
+
+  tags = {
+    Name = var.name_tag
+  }
 }
 
 resource "aws_vpc_security_group_egress_rule" "allow_all" {
@@ -44,4 +55,8 @@ resource "aws_vpc_security_group_egress_rule" "allow_all" {
   description = "allow all outgoing to anywhere"
   cidr_ipv4   = "0.0.0.0/0"
   ip_protocol = "-1"
+
+  tags = {
+    Name = var.name_tag
+  }
 }

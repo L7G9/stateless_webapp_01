@@ -33,7 +33,7 @@ resource "aws_instance" "this" {
   user_data = file("${path.module}${var.user_data_file}")
 
   tags = {
-    Name = "swa_01_instance"
+    Name = var.name_tag
   }
 }
 
@@ -42,6 +42,6 @@ resource "aws_eip" "this" {
   vpc      = true
 
   tags = {
-    Name = "swa_01_eip"
+    Name = var.name_tag
   }
 }
