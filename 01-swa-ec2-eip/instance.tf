@@ -24,8 +24,8 @@ data "aws_ami" "amazon_linux" {
 }
 
 resource "aws_instance" "this" {
-  ami                    = data.aws_ami.amazon_linux.id
-  
+  ami = data.aws_ami.amazon_linux.id
+
   # variable
   instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.this.id]

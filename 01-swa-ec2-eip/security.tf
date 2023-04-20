@@ -1,7 +1,7 @@
 resource "aws_security_group" "this" {
   name        = "this"
   description = "Allow ssh, http & https inbound traffic and all outbound traffic"
-  vpc_id      = aws_vpc.web_server.id
+  vpc_id      = aws_vpc.this.id
 
   tags = {
     Name = "swa_01_sg"
