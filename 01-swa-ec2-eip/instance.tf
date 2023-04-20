@@ -26,13 +26,11 @@ data "aws_ami" "amazon_linux" {
 resource "aws_instance" "this" {
   ami = data.aws_ami.amazon_linux.id
 
-  # variable
-  instance_type          = "t2.micro"
+  instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.this.id]
   subnet_id              = aws_subnet.this.id
 
-  # variable
-  user_data = file("${path.module}/files/user-data.sh")
+  user_data = file("${path.module}${var.user_data_file}")
 
   tags = {
     Name = "swa_01_instance"
