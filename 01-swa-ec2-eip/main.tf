@@ -1,9 +1,8 @@
 terraform {
   cloud {
-    # variable
     organization = "LukeGregory-dev"
+
     workspaces {
-      #variable
       name = "swa-01"
     }
   }
@@ -19,6 +18,5 @@ terraform {
 }
 
 provider "aws" {
-  # variable
-  region = "eu-west-2"
+  region = var.region
 }
