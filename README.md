@@ -1,38 +1,70 @@
-# Stateless Web Application 01
-## Deploy a stateless web application on to AWS using Terraform.  
+# Stateless WebApp #1
 
-This project launches an EC2 instance hosting a web page then creates and attaches a Elastic IP address to it. 
-The aim is to learn Terraform and the AWS provider and attempt to implement best practices for structure, naming and variables. 
-To learn more from the project instead of using defult the VPC and SG it creates its own.  
+![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white) 
+The 1st part a series of projects deploying a stateless webapp on AWS using Terraform.
 
-## Installation
-AWS account & disclaimer
-Terraform installation
-Clone this repo
+---
 
-## Usage
-Move into directory 
-complete .auto.ftvars file
-Terraform validate
-Terraform apply
-Output once completed will display the public IP address of the EIP attached to the EC2 instance. 
-Enter http:// followed by the public IP address to view the web page on the instance.
+This project launches an EC2 instance hosting a web page then creates and attaches an Elastic IP address to it. The aim is to learn Terraform and the AWS provider and attempt to implement best practices for structure, naming and variables. To learn more from the project instead of using defult the VPC and SG it creates its own. 
+[Stateless WebApp #2](https://github.com/L7G9/stateless_webapp_02) and [Stateless WebApp #3](https://github.com/L7G9/stateless_webapp_03) are available.  
 
-## Lessons Learned
+---
 
-### Public Subnets
-Unlike the default VPC some set up is required to give a Subnet on a user defined VPC it access to the Internet. 
-A Route Table containing a route to the Internet Gateway must be accociated with the Subnet to do this. 
+## Getting Started
 
-### Finding AMI names
+### Disclaimer
+This project attempts to stay within the AWS free tier as much as possible but any charges incurred while using are not the responsibility of the Author.
 
-## Credits
-udemy course
-Terraform best practices 
-link subnet articles
+### Requirements
+- [Terraform & AWS CLI](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/aws-build)
 
+Clone Github repository and move into project directory.
+```bash
+git clone https://github.com/L7G9/stateless_webapp_01.git
+cd stateless_webapp_01
+```
 
+Update terraform.auto.tfvars file in a text editor with your own values.  
+```
+region            = "eu-west-2"
+availability_zone = "eu-west-2a"
+user_data_file    = "/files/user-data.sh"
+```
 
-## Licence
+Initialize the directory.
+```bash
+terraform init
+```
 
-## Badges
+Apply the configuration.
+```bash
+terraform apply
+```
+
+Copy the address from the outputs into web browser.
+```bash
+eip_address = "3.10.109.17"
+```
+
+Clean up.
+```bash
+terraform destroy
+```
+
+---
+
+## Author
+[@L7G9](https://www.github.com/L7G9)
+
+---
+
+## Acknowledgements
+All these resources were used to create this project.  Thank you to all those who took the time and effort to share.
+- [Udemy Ultimate AWS Certified Solutions Architect Associate SAA-C03](https://www.udemy.com/course/aws-certified-solutions-architect-associate-saa-c03/)
+- [Terraform AWS getting started](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/aws-build)
+- [terraform-best-practices.com](https://www.terraform-best-practices.com/)
+- [Best practices for using Terraform](https://cloud.google.com/docs/terraform/best-practices-for-terraform)
+- [Building an AWS Terraform VPC Step-by-Step](https://adamtheautomator.com/terraform-vpc/)
+
+---
+
